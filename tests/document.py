@@ -5,15 +5,6 @@ from yomongo.exceptions import SchemaValidationError
 from yomongo.document import Document
 from yomongo import fields
 
-
-MODB2 = {
-    'tss_db': {
-        'host': 'dogen.mongohq.com:10011',
-        'user': 'user_rw',
-        'password': 'user_rw'
-    }
-}
-
 MODB = {
     'test': {
         'host': 'localhost',
