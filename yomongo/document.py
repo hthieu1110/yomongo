@@ -52,6 +52,11 @@ class Document(Schema):
     def filter(cls, *args, **kwargs):
         cursor = cls._collection.find(*args, **kwargs)
         return CursorBinder(cursor, cls)
+    
+    def update(self, **new_values):
+        self._doc.update(new_values)
+        self.save()
+        return self
 
     def save(self, force_insert=False):
         """Save a document.
