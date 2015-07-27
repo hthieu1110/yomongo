@@ -36,27 +36,40 @@ class Document(Schema):
         return cls._db[cls._collection_name]
 
     @classmethod
-    def get(cls, filter_or_id=None, *args, **kwargs):
-        if not isinstance(filter_or_id, (dict, ObjectId)):
-            filter_or_id = ObjectId(filter_or_id)
-        doc = cls._collection.find_one(filter_or_id, *args, **kwargs)
-
+    def get(cls, _id=None, **kwargs):
+        """Like find_one but take _id directly or filter from kwargs,
+        so we can not pass the options. Use find_one if need options
+        """
+        if _id is not None:
+            if not isinstance(_id, ObjectId):
+                _id = ObjectId(_id)
+            filter_or_id = _id
+        else:
+            filter_or_id = kwargs
+        doc = cls._collection.find_one(filter_or_id)
         if doc:
             return cls(**doc)
         return None
 
     @classmethod
-    def get_or_404(cls, filter_or_id=None, *args, **kwargs):
-        result = cls.get(filter_or_id, *args, **kwargs)
+    def get_or_404(cls, _id=None, **kwargs):
+        result = cls.get(_id, **kwargs)
         if not result:
             raise NotFound('{} not found'.format(cls.__name__))
         return result
 
     @classmethod
-    def filter(cls, *args, **kwargs):
+    def filter(cls, **kwargs):
+        """Like find but take filter from kwargs and we can not pass options"""
+        return YoCursor(cls, kwargs)
+
+    @classmethod
+    def find(cls, *args, **kwargs):
+        """Find a document but bind the result to the corresponding model of collection"""
         return YoCursor(cls, *args, **kwargs)
-    
+
     def update(self, **new_values):
+        """Update the current document we new values"""
         self._doc.update(new_values)
         self.save()
         return self

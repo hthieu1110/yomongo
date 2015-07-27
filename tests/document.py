@@ -68,8 +68,10 @@ users = MyUser.filter()
 assert users.count() == 2
 assert len(users) == 2
 
-users = MyUser.filter({'name': 'Lobo'})
+users = MyUser.find({'name': 'Lobo'})
 assert MyUser.filter()[0].name == 'Lobo'
+assert MyUser.filter(name='Lobo')[0].to_view() == MyUser.get(name='Lobo').to_view()
+
 
 MyUser(name='tutu').save()
 assert MyUser.filter().count() == 3
