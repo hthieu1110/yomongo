@@ -43,7 +43,7 @@ class Document(Schema):
 
     @classmethod
     def get_or_404(cls, filter_or_id=None, *args, **kwargs):
-        result = cls.get(cls, filter_or_id, *args, **kwargs)
+        result = cls.get(filter_or_id, *args, **kwargs)
         if not result:
             raise NotFound('{} not found'.format(cls.__name__))
         return result
