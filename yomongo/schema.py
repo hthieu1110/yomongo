@@ -14,7 +14,7 @@ class Schema(object):
     }
     _custom_fields = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, validate_on_init=False, **kwargs):
         self._doc = {}
 
         # Set kwargs to schema _doc
@@ -35,7 +35,10 @@ class Schema(object):
                 if callable(default_value):
                     default_value = default_value()
                 self._doc[field] = default_value
-        self.validate()
+
+        # Validate document if validation on init is forced
+        if validate_on_init:
+            self.validate()
 
     def __repr__(self):
         return "<{}: {} at {}>".format(
@@ -120,7 +123,7 @@ class Schema(object):
 
         results = {}
         for field in fields:
-            results[field] = self._doc.get(field, getattr(self, field, None))
+            results[field] = self._doc.get(field, getattr(self, field))
         return results
 
     def to_dict(self):

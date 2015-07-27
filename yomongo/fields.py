@@ -38,10 +38,11 @@ class Dict(BaseField): pass
 class List(BaseField): pass
 class Set(BaseField): pass
 class ObjectId(BaseField): pass
-
+class Location(BaseField): pass
 
 # Shortcuts
 class Str(String): type = 'string'
 class Int(Integer): type = 'integer'
 class Num(Number): type = 'number'
 class Bool(Boolean): type = 'boolean'
+class Loc(Location): type = 'location'

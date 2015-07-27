@@ -6,7 +6,7 @@ from client import Client
 
 from schema import Schema
 from werkzeug.exceptions import NotFound
-from yomongo.cursor import CursorBinder
+from yomongo.cursor import YoCursor
 from yomongo.exceptions import DocumentActionError
 
 
@@ -54,8 +54,7 @@ class Document(Schema):
 
     @classmethod
     def filter(cls, *args, **kwargs):
-        cursor = cls._collection.find(*args, **kwargs)
-        return CursorBinder(cursor, cls)
+        return YoCursor(cls, *args, **kwargs)
     
     def update(self, **new_values):
         self._doc.update(new_values)

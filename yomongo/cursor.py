@@ -1,41 +1,40 @@
 # -*- coding: utf-8 -*-
+from pymongo.cursor import Cursor
 
 
-class CursorBinder(object):
-    def __init__(self, cursor, doc_cls):
-        self.cursor = cursor
-        self.cls = doc_cls
-        self.start = 0
-        self.stop = self.count()
-        self.step = 1
-        self.current = 0
+class YoCursor(Cursor):
+    def __init__(self, cls, *args, **kwargs):
+        self.cls = cls
+        super(YoCursor, self).__init__(cls._collection, *args, **kwargs)
+
+        self._start = 0
+        self._stop = self.count()
+        self._step = 1
+        self._current = 0
 
     def __iter__(self):
-        if self.start:
-            self.current = self.start
-            for i in xrange(self.start):
-                self.cursor.next()
+        if self._start:
+            self._current = self._start
+            for i in xrange(self._start):
+                self.next()
 
-        while self.current < self.stop:
-            yield self.cls(**self.cursor.next())
-            self.current += self.step
+        while self._current < self._stop:
+            yield self.cls(**self.next())
+            self._current += self._step
 
     def __len__(self):
-        return self.cursor.count()
+        return self.count()
 
     def __getitem__(self, item):
         if isinstance(item, int):
             for i in xrange(item):
-                self.cursor.next()
-            return self.cls(**self.cursor.next())
+                self.next()
+            return self.cls(**self.next())
         elif isinstance(item, slice):
-            self.start = item.start
-            self.stop = item.stop
-            self.step = item.step or self.step
+            self._start = item.start
+            self._stop = item.stop
+            self._step = item.step or self._step
             return self
-
-    def count(self):
-        return self.__len__()
 
     def to_list(self):
         return list(self.__iter__())
