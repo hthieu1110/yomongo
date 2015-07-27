@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from bson import ObjectId
+
 from utils import classproperty, camel_to_snake
 from client import Client
 
@@ -35,6 +37,8 @@ class Document(Schema):
 
     @classmethod
     def get(cls, filter_or_id=None, *args, **kwargs):
+        if not isinstance(filter_or_id, (dict, ObjectId)):
+            filter_or_id = ObjectId(filter_or_id)
         doc = cls._collection.find_one(filter_or_id, *args, **kwargs)
 
         if doc:
