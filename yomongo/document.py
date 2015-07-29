@@ -68,6 +68,10 @@ class Document(Schema):
         """Find a document but bind the result to the corresponding model of collection"""
         return YoCursor(cls, *args, **kwargs)
 
+    @property
+    def id(self):
+        return getattr(self, self._pk)
+
     def update(self, **new_values):
         """Update the current document we new values"""
         self._doc.update(new_values)

@@ -15,6 +15,8 @@ class _SchemaMeta(type):
         if name != 'Schema':
             newattrs['_views'] = deepcopy(bases[0]._views)
             newattrs['_custom_fields'] = deepcopy(bases[0]._custom_fields)
+            # TODO: Normaly, this line is not needed because _pk is str (immutable)
+            newattrs['_pk'] = deepcopy(bases[0]._pk)
         return super(_SchemaMeta, cls).__new__(cls, name, bases, newattrs)
 
 
@@ -26,6 +28,7 @@ class Schema(object):
         "default": {'include': None, 'exclude': None}
     }
     _custom_fields = []
+    _pk = '_id'
 
     def __init__(self, validate_on_init=False, **kwargs):
         self._doc = {}
