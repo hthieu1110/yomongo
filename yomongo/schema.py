@@ -7,8 +7,21 @@ from exceptions import SchemaValidationError
 from validator import CustomValidator
 
 
+class _SchemaMeta(type):
+    """Use for creation of delivered classes of Schema
+    for being able to inherit of class attribute by copying not by referecing
+    """
+    def __new__(cls, name, bases, newattrs):
+        if name != 'Schema':
+            newattrs['_views'] = deepcopy(bases[0]._views)
+            newattrs['_custom_fields'] = deepcopy(bases[0]._custom_fields)
+        return super(_SchemaMeta, cls).__new__(cls, name, bases, newattrs)
+
+
 class Schema(object):
     """Python representation of Cerberus"""
+    __metaclass__ = _SchemaMeta
+
     _views = {
         "default": {'include': None, 'exclude': None}
     }
