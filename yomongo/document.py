@@ -36,8 +36,8 @@ class Document(Schema):
         return cls._db[cls._collection_name]
 
     @classmethod
-    def get(cls, _id=None, **kwargs):
-        """Like find_one but take _id directly or filter from kwargs,
+    def get(cls, _id=None, **filter):
+        """Like find_one but take _id directly or filter,
         so we can not pass the options. Use find_one if need options
         """
         if _id is not None:
@@ -45,15 +45,17 @@ class Document(Schema):
                 _id = ObjectId(_id)
             filter_or_id = _id
         else:
-            filter_or_id = kwargs
+            if filter == {}:
+                raise ValueError('You must precis either _id or filter')
+            filter_or_id = filter
         doc = cls._collection.find_one(filter_or_id)
         if doc:
             return cls(**doc)
         return None
 
     @classmethod
-    def get_or_404(cls, _id=None, **kwargs):
-        result = cls.get(_id, **kwargs)
+    def get_or_404(cls, _id=None, **filter):
+        result = cls.get(_id, **filter)
         if not result:
             raise NotFound('{} not found'.format(cls.__name__))
         return result
