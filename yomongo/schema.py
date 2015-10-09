@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from copy import deepcopy
 from bson.objectid import ObjectId
 from utils import cached_classproperty
@@ -145,7 +146,15 @@ class Schema(object):
     def to_dict(self):
         return self._doc
 
-
+    def to_json(self):
+        result = {}
+        for key, value in self._doc.items():
+            if isinstance(value, datetime):
+                value = value.dt.strftime('%Y-%m-%dT%H:%M:%S%z')
+            elif isinstance(value, ObjectId):
+                value = str(value)
+            result[key] = value
+        return result
 
     # @classproperty
     # def custom_field(cls):
