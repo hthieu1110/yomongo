@@ -150,7 +150,7 @@ class Schema(object):
         result = {}
         for key, value in self._doc.items():
             if isinstance(value, datetime):
-                value = value.dt.strftime('%Y-%m-%dT%H:%M:%S%z')
+                value = value.strftime('%Y-%m-%dT%H:%M:%S%z')
             elif isinstance(value, ObjectId):
                 value = str(value)
             result[key] = value
