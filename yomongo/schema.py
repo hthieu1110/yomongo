@@ -129,8 +129,8 @@ class Schema(object):
             raise SchemaValidationError(self._validator.errors)
         return self._doc
 
-    def to_view(self, name=None, include=None, exclude=None):
-        view = self._views[name or 'default']
+    def to_view(self, name='default', include=None, exclude=None):
+        view = self._views[name]
         _include = include or view['include']
         _exclude = exclude or view['exclude']
 
@@ -146,11 +146,11 @@ class Schema(object):
     def to_dict(self):
         return self._doc
 
-    def to_json(self):
+    def to_json(self, view_name='default'):
         result = {}
-        for key, value in self._doc.items():
+        for key, value in self.to_view(view_name).items():
             if isinstance(value, datetime):
-                value = value.dt.strftime('%Y-%m-%dT%H:%M:%S%z')
+                value = value.strftime('%Y-%m-%dT%H:%M:%S%z')
             elif isinstance(value, ObjectId):
                 value = str(value)
             result[key] = value

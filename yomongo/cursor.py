@@ -36,6 +36,10 @@ class YoCursor(Cursor):
             self._step = item.step or self._step
             return self
 
+    def remove(self):
+        for item in self.__iter__():
+            item.remove()
+
     def to_list(self):
         return list(self.__iter__())
 
