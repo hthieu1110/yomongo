@@ -45,8 +45,8 @@ class Schema(object):
         # We have to get original definition if field
         # Because definition in schema is cerberus compatible
         # So we have already removed 'default'
-        for field in self._schema.keys():
-            definition = getattr(self.__class__, field).definition
+        for field, definition in self._schema.items():
+            # definition = getattr(self.__class__, field).definition
             if 'default' in definition and field not in self._doc:
                 default_value = definition['default']
                 if callable(default_value):
@@ -98,15 +98,16 @@ class Schema(object):
             if not attr_name.startswith('_'):
                 attr = getattr(cls, attr_name)
                 if isinstance(attr, BaseField):
-                    _definition = deepcopy(attr.definition)
-                    _definition.pop('default', None)
-                    schema[attr_name] = _definition
+                    schema[attr_name] = deepcopy(attr.definition)
         return schema
 
     @cached_classproperty
     def _validator(cls):
         """Return the Validator instance of Cerberus"""
-        return CustomValidator(cls._schema)
+        _schema = deepcopy(cls._schema)
+        for field, definition in _schema.items():
+            definition.pop('default', None)
+        return CustomValidator(_schema)
 
     @classmethod
     def add_view(cls, name, include=None, exclude=None):
